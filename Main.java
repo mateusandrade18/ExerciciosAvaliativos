@@ -44,7 +44,18 @@ public class Main {
                 case 5:
                     recuperarEnergiaRobo(s, robos);
                     break;
-                
+                case 6:
+                    rodadaGeral(robos);
+                    break;
+                case 7:
+                    exibirClassificacao(robos);
+                    break;
+                case 8:
+                    exibirEstatisticas(robos);
+                    break;
+                case 9:
+                    excluirRobo(s, robos);
+                    break;
                 default:
                     System.out.println("Operação inválida.");
                     break;
@@ -61,7 +72,7 @@ public class Main {
             return -1;
         }
     }
-   
+
     public static int lerInteiro(Scanner s, String mensagem) {
         while (true) {
             System.out.print(mensagem);
@@ -73,7 +84,7 @@ public class Main {
             }
         }
     }
-  
+
     public static Robo buscarPorCodigo(ArrayList<Robo> robos, int codigo) {
         for (int i = 0; i < robos.size(); i++) {
             if (robos.get(i).getCodigo() == codigo) {
@@ -109,7 +120,7 @@ public class Main {
             System.out.println("Erro: " + e.getMessage());
         }
     }
-   
+
     public static void consultarRobo(Scanner s, ArrayList<Robo> robos) {
         if (robos.isEmpty()) {
             System.out.println("Nenhum robô cadastrado.");
@@ -138,7 +149,7 @@ public class Main {
             " | Situação: " + (r.estaDisponivel() ? "Disponível" : "Em recuperação")
         );
     }
-  
+
     public static void listarRobos(ArrayList<Robo> robos) {
         if (robos.isEmpty()) {
             System.out.println("Nenhum robô cadastrado.");
@@ -168,15 +179,15 @@ public class Main {
             System.out.println("Erro: um dos códigos não existe.");
             return;
         }
-        if (!a.estaDisponivel() || !b.estaDisponivel()) { 
+        if (!a.estaDisponivel() || !b.estaDisponivel()) {
             System.out.println("Erro: ambos os robôs precisam ter pelo menos 30 de energia.");
             return;
         }
         combater(a, b);
     }
-  
+
     public static void combater(Robo a, Robo b) {
-  
+
         Robo primeiro;
         Robo segundo;
         if (a.getPontos() < b.getPontos()) {
@@ -201,7 +212,7 @@ public class Main {
 
             atacar(primeiro, segundo, rodada);
             if (segundo.getEnergia() == 0) {
-                break; 
+                break;
             }
 
             atacar(segundo, primeiro, rodada);
@@ -252,7 +263,7 @@ public class Main {
             + " e causa " + dano + " de dano. Energia de "
             + defensor.getNome() + ": " + defensor.getEnergia());
     }
-        // Pede o código e a quantidade, e tenta recuperar a energia (case 5).
+    
     public static void recuperarEnergiaRobo(Scanner s, ArrayList<Robo> robos) {
         if (robos.isEmpty()) {
             System.out.println("Nenhum robô cadastrado.");
@@ -274,5 +285,188 @@ public class Main {
             System.out.println("Recuperação recusada: " + e.getMessage());
         }
     }
+   
+    public static boolean vemAntes(Robo a, Robo b) {
+        if (a.getPontos() != b.getPontos()) {
+            return a.getPontos() > b.getPontos();
+        }
+        if (a.getVitorias() != b.getVitorias()) {
+            return a.getVitorias() > b.getVitorias();
+        }
+        if (a.getEnergia() != b.getEnergia()) {
+            return a.getEnergia() > b.getEnergia();
+        }
+        return a.getCodigo() < b.getCodigo();
+    }
+   
+    public static ArrayList<Robo> ordenarClassificacao(ArrayList<Robo> robos) {
+        ArrayList<Robo> copia = new ArrayList<>();
+        for (int i = 0; i < robos.size(); i++) {
+            copia.add(robos.get(i));
+        }
+
+        for (int i = 0; i < copia.size() - 1; i++) {
+            int melhor = i;
+            for (int j = i + 1; j < copia.size(); j++) {
+                if (vemAntes(copia.get(j), copia.get(melhor))) {
+                    melhor = j;
+                }
+            }
+            if (melhor != i) {
+                Robo aux = copia.get(i);
+                copia.set(i, copia.get(melhor));
+                copia.set(melhor, aux);
+            }
+        }
+        return copia;
+    }
     
+    public static void exibirClassificacao(ArrayList<Robo> robos) {
+        if (robos.isEmpty()) {
+            System.out.println("Nenhum robô cadastrado.");
+            return;
+        }
+        ArrayList<Robo> ranking = ordenarClassificacao(robos);
+        System.out.println("=== CLASSIFICAÇÃO ===");
+        for (int i = 0; i < ranking.size(); i++) {
+            Robo r = ranking.get(i);
+            System.out.println((i + 1) + "º | Código: " + r.getCodigo()
+                + " | Nome: " + r.getNome()
+                + " | Pontos: " + r.getPontos()
+                + " | Combates: " + r.getTotalCombates()
+                + " | Vitórias: " + r.getVitorias()
+                + " | Empates: " + r.getEmpates()
+                + " | Derrotas: " + r.getDerrotas()
+                + " | Energia: " + r.getEnergia());
+        }
+    }
+    
+    public static void rodadaGeral(ArrayList<Robo> robos) {
+        if (robos.isEmpty()) {
+            System.out.println("Nenhum robô cadastrado.");
+            return;
+        }
+      
+        ArrayList<Robo> ranking = ordenarClassificacao(robos);
+        ArrayList<Robo> disponiveis = new ArrayList<>();
+        for (int i = 0; i < ranking.size(); i++) {
+            if (ranking.get(i).estaDisponivel()) {
+                disponiveis.add(ranking.get(i));
+            }
+        }
+
+        if (disponiveis.size() < 2) {
+            System.out.println("Rodada recusada: é preciso ter pelo menos 2 robôs disponíveis.");
+            return;
+        }
+        
+        ArrayList<Robo> lado1 = new ArrayList<>();
+        ArrayList<Robo> lado2 = new ArrayList<>();
+        for (int i = 0; i + 1 < disponiveis.size(); i += 2) {
+            lado1.add(disponiveis.get(i));
+            lado2.add(disponiveis.get(i + 1));
+        }
+        Robo folga = null;
+        if (disponiveis.size() % 2 != 0) {
+            folga = disponiveis.get(disponiveis.size() - 1);
+        }
+
+        System.out.println("=== RODADA GERAL ===");
+        System.out.println("Confrontos definidos:");
+        for (int i = 0; i < lado1.size(); i++) {
+            System.out.println((i + 1) + ") " + lado1.get(i).getNome() + " x " + lado2.get(i).getNome());
+        }
+        if (folga != null) {
+            System.out.println("Folga: " + folga.getNome());
+        }
+  
+        for (int i = 0; i < lado1.size(); i++) {
+            combater(lado1.get(i), lado2.get(i));
+        }
+
+        if (folga != null) {
+            folga.receberFolga();
+            System.out.println(folga.getNome() + " ficou sem adversário e ganhou 1 ponto de folga.");
+        }
+    }
+
+    public static void exibirEstatisticas(ArrayList<Robo> robos) {
+        if (robos.isEmpty()) {
+            System.out.println("Nenhum robô cadastrado.");
+            return;
+        }
+
+        System.out.println("=== ESTATÍSTICAS ===");
+        System.out.println("Robôs cadastrados: " + robos.size());
+
+        int soma = 0;
+        for (int i = 0; i < robos.size(); i++) {
+            soma += robos.get(i).getEnergia();
+        }
+        double media = (double) soma / robos.size();
+        System.out.printf("Média de energia: %.2f%n", media);
+
+        System.out.println("Robôs em recuperação:");
+        boolean achou = false;
+        for (int i = 0; i < robos.size(); i++) {
+            if (!robos.get(i).estaDisponivel()) {
+                System.out.println("- " + robos.get(i).getNome() + " (energia " + robos.get(i).getEnergia() + ")");
+                achou = true;
+            }
+        }
+        if (!achou) {
+            System.out.println("Nenhum.");
+        }
+
+       
+        Robo melhor = null;
+        for (int i = 0; i < robos.size(); i++) {
+            Robo r = robos.get(i);
+            if (r.getTotalCombates() == 0) {
+                continue;
+            }
+            if (melhor == null
+                || r.getVitorias() * melhor.getTotalCombates() > melhor.getVitorias() * r.getTotalCombates()) {
+                melhor = r;
+            }
+        }
+
+        if (melhor == null) {
+            System.out.println("Maior aproveitamento: nenhum robô lutou ainda.");
+        } else {
+            System.out.println("Maior aproveitamento:");
+            for (int i = 0; i < robos.size(); i++) {
+                Robo r = robos.get(i);
+                if (r.getTotalCombates() == 0) {
+                    continue;
+                }
+                if (r.getVitorias() * melhor.getTotalCombates() == melhor.getVitorias() * r.getTotalCombates()) {
+                    System.out.printf("- %s: %.2f%% (%d combate(s): %d vitória(s), %d empate(s), %d derrota(s))%n",
+                        r.getNome(), r.calcularAproveitamento(), r.getTotalCombates(),
+                        r.getVitorias(), r.getEmpates(), r.getDerrotas());
+                }
+            }
+        }
+    }
+
+    
+    public static void excluirRobo(Scanner s, ArrayList<Robo> robos) {
+        if (robos.isEmpty()) {
+            System.out.println("Nenhum robô cadastrado.");
+            return;
+        }
+        int codigo = lerInteiro(s, "Digite o código do robô: ");
+        Robo r = buscarPorCodigo(robos, codigo);
+        if (r == null) {
+            System.out.println("Robô não encontrado.");
+            return;
+        }
+        if (r.getTotalCombates() > 0) {
+            System.out.println("Exclusão recusada: " + r.getNome() + " já realizou combate(s).");
+            return;
+        }
+        robos.remove(r);
+        System.out.println("Robô " + r.getNome() + " excluído com sucesso.");
+    }
+
 }
