@@ -259,7 +259,6 @@ public class Main {
             atacar(primeiro, segundo, rodada);
             if (segundo.getEnergia() == 0) {
                 break;
-                break;
             }
 
             atacar(segundo, primeiro, rodada);
