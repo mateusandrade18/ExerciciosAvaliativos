@@ -78,11 +78,13 @@ public abstract class Robo {
     public void registrarEmpate() {
         empates++;
         pontos += 1;
+        pontos += 1;
     }
 
     public void receberFolga() {
         pontos += 1;
     }
+
 
     public void recuperarEnergia(int quantidade) {
         if (quantidade <= 0) {

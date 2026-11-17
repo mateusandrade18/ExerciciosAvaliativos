@@ -55,6 +55,18 @@ public class Main {
                 case 9:
                     excluirRobo(s, robos);
                     break;
+                case 6:
+                    rodadaGeral(robos);
+                    break;
+                case 7:
+                    exibirClassificacao(robos);
+                    break;
+                case 8:
+                    exibirEstatisticas(robos);
+                    break;
+                case 9:
+                    excluirRobo(s, robos);
+                    break;
                 default:
                     System.out.println("Operação inválida.");
                     break;
@@ -72,6 +84,7 @@ public class Main {
         }
     }
 
+
     public static int lerInteiro(Scanner s, String mensagem) {
         while (true) {
             System.out.print(mensagem);
@@ -83,6 +96,7 @@ public class Main {
             }
         }
     }
+
 
     public static Robo buscarPorCodigo(ArrayList<Robo> robos, int codigo) {
         for (int i = 0; i < robos.size(); i++) {
@@ -142,6 +156,7 @@ public class Main {
         }
     }
 
+
     public static void consultarRobo(Scanner s, ArrayList<Robo> robos) {
         if (robos.isEmpty()) {
             System.out.println("Nenhum robô cadastrado.");
@@ -173,6 +188,7 @@ public class Main {
             " | Situação: " + (r.estaDisponivel() ? "Disponível" : "Em recuperação")
         );
     }
+
 
     public static void listarRobos(ArrayList<Robo> robos) {
         if (robos.isEmpty()) {
@@ -215,6 +231,7 @@ public class Main {
         combater(a, b);
     }
 
+
     public static void combater(Robo a, Robo b) {
         Robo primeiro;
         Robo segundo;
@@ -241,6 +258,7 @@ public class Main {
 
             atacar(primeiro, segundo, rodada);
             if (segundo.getEnergia() == 0) {
+                break;
                 break;
             }
 
