@@ -55,18 +55,6 @@ public class Main {
                 case 9:
                     excluirRobo(s, robos);
                     break;
-                case 6:
-                    rodadaGeral(robos);
-                    break;
-                case 7:
-                    exibirClassificacao(robos);
-                    break;
-                case 8:
-                    exibirEstatisticas(robos);
-                    break;
-                case 9:
-                    excluirRobo(s, robos);
-                    break;
                 default:
                     System.out.println("Operação inválida.");
                     break;
