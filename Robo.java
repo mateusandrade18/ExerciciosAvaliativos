@@ -1,6 +1,4 @@
-package Exercicio_avaliativo;
-
-public class Robo {
+public abstract class Robo {
 
     private int codigo;
     private String nome;
@@ -46,7 +44,6 @@ public class Robo {
     public int getEmpates() { return empates; }
     public int getPontos() { return pontos; }
 
-    
     public boolean estaDisponivel() {
         return energia >= 30;
     }
@@ -80,13 +77,13 @@ public class Robo {
 
     public void registrarEmpate() {
         empates++;
-        pontos += 1; 
+        pontos += 1;
     }
 
     public void receberFolga() {
         pontos += 1;
     }
-  
+
     public void recuperarEnergia(int quantidade) {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("A quantidade deve ser um número positivo.");
@@ -107,5 +104,19 @@ public class Robo {
         pontos -= custo;
         energia += quantidade;
     }
-    
-}       
+
+   
+
+    public String getTipo() {
+        return "Robô";
+    }
+
+    public int calcularAtaque() {
+        return ataque;
+    }
+
+    public int reduzirDano(int dano) {
+        return dano;
+    }
+
+}
